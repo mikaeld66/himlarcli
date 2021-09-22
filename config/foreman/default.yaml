@@ -1,4 +1,7 @@
 ---
+# global_settings are handled by puppet
+
+
 global_params:
   - name: 'enable-puppetlabs-repo'
     value: 'false'
@@ -21,66 +24,49 @@ global_params:
   - name: 'ntp-server'
     value: 'no.pool.ntp.org'
 
-global_settings:
-  - name: 'root_pass'
-    value: '$1$jslKP.Wo$dtqCd5M8Lyc5J9UggVk1f0'
-  - name: 'entries_per_page'
-    value: '100'
-  - name: 'foreman_url'
-    value: 'https://' + himlar_domain
-  - name: 'unattended_url'
-    value: 'http://'+ himlar_domain
-  - name: 'trusted_puppetmaster_hosts'
-    value: ['himlar_domain']
-  - name: 'discovery_fact_column'
-    value: 'ipmi_ipaddress'
-  - name: 'update_ip_from_built_request'
-    value: 'true'
-  - name: 'use_shortname_for_vms'
-    value: 'true'
-  - name: 'idle_timeout'
-    value: '180'
 
 subnets:
-  name: 'mgmt'
-  network: 'network'
-  mask: 'mask'
-  domain_ids: 'mgmt'
-  tftp_id: 'TFTP'
+  name: 'mgmt.iaas.vagrant.intern'
+  network: '10.100.200.0'
+  cidr: '24'
+  domain_ids: ''
+  tftp_id: ''
 
 media:
-  nam': 'CentOS download.iaas.uio.no test'
-  os-family: 'Redhat'
-  path: 'https://download.iaas.uio.no/uh-iaas/test/centos-base/'
+  name: 'CentOS download.iaas.uio.no'
+  os_family: 'Redhat'
+  path: ''
 
-operatingsytems:
+operatingsystems:
   centos7:
     name: 'CentOS'
     family: 'Redhat'
     major: '7'
-    minor: '8'
-    architecture_ids:
+    minor: '9.2009'
+    architectures:
       - 'x86_64'
-    medium_ids:
+    media:
       - 'CentOS download.iaas.uio.no'
-    ptables_ids:
-      - 'Community norcams ptable default'
-      - 'norcams Kickstart default uefi'
+    ptables:
+      - 'norcams-Kickstart default'
+      - 'norcams-Kickstart default uefi'
+    provisioningtemplates:
+      - 'norcams-Kickstart default'
+      - 'norcams-Kickstart default PXEGrub2'
+      - 'norcams-Kickstart default PXELinux'
 
 hostgroups:
   base:
     name: 'base'
     architecture: 'x86_64'
-    operatingsystem: 'norcams CentOS'
+    operatingsystem: 'CentOS 7.9.2009'
     environment: 'production'
     pxe_loader: 'PXELinux BIOS'
-    medium_id: 'CentOS download.iaas.uio.no'
-    ptables_ids:
-      - 'Community norcams ptable default'
-      - 'norcams Kickstart default uefi'
-    subnet_id: 'mgmt',
-    puppet_proxy_id: 'TFTP'
-    puppet_ca_proxy_id: 'TFTP'
+    media: 'CentOS download.iaas.uio.no'
+    ptable: 'norcams-Kickstart default'
+    subnet: 'mgmt'
+    parameters:
+        - { 'name': 'enable-puppetlabs-puppet5-repo', 'value': 'true', 'parameter_type': 'string' }
   storage:
     name: 'storage'
     parent: 'base'
